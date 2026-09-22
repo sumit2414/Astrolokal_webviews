@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chat to Audio — AstroLokal Feature Update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FFF6EE;
+    --cream-2: #FFEBDA;
+    --card: #FFFFFF;
+    --card-border: #FBE3CF;
+    --ink: #2A1B10;
+    --ink-soft: #5B4A3D;
+    --orange-1: #FF7A18;
+    --orange-2: #E23B00;
+    --orange-3: #FFE3C4;
+    --ring: rgba(226, 59, 0, 0.16);
+    font-size: 16px;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(1100px 700px at 50% -10%, #FFE3C4 0%, transparent 55%),
+      linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px 64px;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+  }
+
+  /* decorative sparkles */
+  .spark {
+    position: absolute;
+    color: var(--orange-1);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .spark svg { width: 100%; height: 100%; display: block; }
+  .s1 { top: 6px;  left: -6px;  width: 20px; }
+  .s2 { top: 34px; right: 34px; width: 16px; }
+  .s3 { top: 96px; right: -2px; width: 14px; opacity: 0.4; }
+  .s4 { top: 330px; left: -18px; width: 18px; }
+  .s5 { top: 470px; right: -14px; width: 16px; }
+
+  .dotgrid {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(4, 5px);
+    gap: 6px;
+    opacity: 0.35;
+  }
+  .dotgrid span { width: 5px; height: 5px; border-radius: 50%; background: var(--orange-2); }
+  .dotgrid.top-left { top: 2px; left: -4px; }
+
+  header.brand {
+    text-align: center;
+    padding-top: 8px;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .mark {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 10px;
+    filter: drop-shadow(0 8px 18px var(--ring));
+  }
+  .brand h1.wordmark {
+    margin: 0;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: 0.2px;
+    background: linear-gradient(180deg, var(--orange-1), var(--orange-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px 9px 14px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--orange-2), var(--orange-1));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 24px -10px var(--ring);
+    margin-bottom: 18px;
+  }
+  .badge svg { width: 16px; height: 16px; flex: none; }
+
+  .hero {
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  h2.headline {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.02;
+    margin: 0;
+    background: linear-gradient(115deg, #FF9A3D 0%, var(--orange-2) 62%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .flow-icon {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .flow-icon .bubble {
+    width: 34px; height: 34px;
+    border: 2px solid var(--orange-1);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--orange-1);
+    background: var(--card);
+  }
+  .flow-icon .bubble svg { width: 16px; height: 16px; }
+  .flow-icon svg.arrow { width: 20px; height: 14px; color: var(--orange-2); }
+  .flow-icon .call {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--orange-1), var(--orange-2));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 14px -4px var(--ring);
+  }
+  .flow-icon .call svg { width: 17px; height: 17px; color: #fff; }
+
+  p.lede {
+    margin: 14px 0 0;
+    font-size: 1.06rem;
+    line-height: 1.48;
+    color: var(--ink-soft);
+  }
+  p.lede strong {
+    color: var(--orange-2);
+    font-weight: 600;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 26px 0 20px;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 18px 18px;
+    box-shadow: 0 10px 26px -18px rgba(120, 60, 10, 0.55);
+  }
+  .step .icon-wrap {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #FFE7CE, #FFD1A6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .step .icon-wrap svg {
+    width: 28px;
+    height: 28px;
+    color: var(--orange-2);
+  }
+  .step .num {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--orange-1), var(--orange-2));
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px -2px var(--ring);
+  }
+  .step .icon-wrap svg.money {
+    width: 38px;
+    height: 38px;
+  }
+  .step .text h3 {
+    margin: 2px 0 4px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 1.16rem;
+  }
+  .step .text p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.42;
+    color: var(--ink-soft);
+  }
+
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 18px;
+    padding: 18px 20px;
+    background: linear-gradient(115deg, var(--orange-2) 0%, var(--orange-1) 100%);
+    color: #fff;
+    box-shadow: 0 16px 34px -16px var(--ring);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta .mega {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    position: relative;
+  }
+  .cta p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.02rem;
+    line-height: 1.34;
+    color: #fff;
+    position: relative;
+  }
+
+  footer.foot {
+    text-align: center;
+    margin-top: 26px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    opacity: 0.75;
+  }
+
+  @media (max-width: 380px) {
+    h2.headline { font-size: 2.1rem; }
+    .step { padding: 15px; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+  <div class="sheet">
+
+    <div class="spark s1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+    <div class="spark s2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+    <div class="spark s3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+    <div class="spark s4"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+    <div class="spark s5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 5 3 7 8 8-5 1-7 3-8 8-1-5-3-7-8-8 5-1 7-3 8-8z"/></svg></div>
+
+    <header class="brand">
+      <svg class="mark" viewBox="0 0 100 100" fill="none">
+        <defs>
+          <linearGradient id="markGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#FF9A3D"/>
+            <stop offset="1" stop-color="#E23B00"/>
+          </linearGradient>
+        </defs>
+        <g fill="url(#markGrad)">
+          <path d="M50 2c3 8 6 11 14 12-8 1-11 4-14 12-3-8-6-11-14-12 8-1 11-4 14-12z" transform="translate(0,-2) scale(1)"/>
+        </g>
+        <g stroke="url(#markGrad)" stroke-width="5">
+          <circle cx="50" cy="55" r="34" fill="#fff"/>
+          <circle cx="50" cy="55" r="34" fill="none"/>
+        </g>
+        <circle cx="50" cy="55" r="22" fill="url(#markGrad)"/>
+        <path d="M50 45c2 5 5 8 10 10-5 2-8 5-10 10-2-5-5-8-10-10 5-2 8-5 10-10z" fill="#fff"/>
+        <g fill="url(#markGrad)">
+          <ellipse cx="50" cy="16" rx="5" ry="9"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(30 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(60 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(90 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(120 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(150 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(180 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(210 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(240 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(270 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(300 50 55)"/>
+          <ellipse cx="50" cy="16" rx="5" ry="9" transform="rotate(330 50 55)"/>
+        </g>
+      </svg>
+      <h1 class="wordmark">AstroLokal</h1>
+    </header>
+
+    <div class="badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a4 4 0 0 1 0 8"/><path d="M18 5a8 8 0 0 1 0 14"/></svg>
+      Feature update
+    </div>
+
+    <div class="hero">
+      <div class="hero-top">
+        <h2 class="headline">Chat to<br>Audio</h2>
+        <div class="flow-icon">
+          <div class="bubble">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="17" cy="12" r="1"/></svg>
+          </div>
+          <svg class="arrow" viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h20M15 1l6 6-6 6"/></svg>
+          <div class="call">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1.1L6.6 10.8z"/></svg>
+          </div>
+        </div>
+      </div>
+      <p class="lede">During a live chat, users can switch to an audio call with the <strong>same astrologer</strong> in the <strong>same consultation</strong>.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="icon-wrap">
+          <div class="num">1</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
+        </div>
+        <div class="text">
+          <h3>Pick early</h3>
+          <p>Switch to audio as soon as possible — users may cancel if the wait runs long.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon-wrap">
+          <div class="num">2</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0 1 18 0"/><path d="M3 13v3a2 2 0 0 0 2 2h1v-6H4a1 1 0 0 0-1 1z"/><path d="M21 13v3a2 2 0 0 1-2 2h-1v-6h2a1 1 0 0 1 1 1z"/><path d="M9 20a2 2 0 0 0 2 2h2"/></svg>
+        </div>
+        <div class="text">
+          <h3>Suggest audio more</h3>
+          <p>Encourage users to switch from chat to audio more often during the session.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="icon-wrap">
+          <div class="num">3</div>
+          <svg class="money" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="19" fill="none"
+                    stroke="currentColor" stroke-width="3"/>
+            <g stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none">
+              <path d="M18 16h12"/>
+              <path d="M18 21h12"/>
+              <path d="M18 26h6c3.3 0 6-2.2 6-5s-2.7-5-6-5"/>
+              <path d="M18.5 26L29 34.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="text">
+          <h3>Helps you earn more</h3>
+          <p>Audio calls usually run longer, so you can earn more coins per consultation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <div class="mega">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a4 4 0 0 1 0 8"/><path d="M18 5a8 8 0 0 1 0 14"/></svg>
+      </div>
+      <p>Suggest audio more this week to build stronger user connections.</p>
+    </div>
+
+    <footer class="foot">AstroLokal · Astrologer feature update</footer>
+  </div>
+</body>
+</html>
